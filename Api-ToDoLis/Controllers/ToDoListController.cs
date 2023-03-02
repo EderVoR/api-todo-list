@@ -28,6 +28,35 @@ namespace Api_ToDoLis.Controllers
             return Ok(tarefa);
         }
 
+        [HttpGet]
+        public IActionResult RetornaTarefas()
+        {
+            List<ToDoList> tarefas = _context.ToDoLists.ToList();
+            ReadToDoList dtoLista = _mapper.Map<ReadToDoList>(tarefas);
+            return Ok(dtoLista);
+        }
 
+        [HttpGet("{id}")]
+        public IActionResult RetornaTarefas(int id)
+        {
+            ToDoList tarefa = _context.ToDoLists.FirstOrDefault(x => x.Id == id);
+            if(tarefa == null)
+                return NotFound();
+
+            ReadToDoList dtoLista = _mapper.Map<ReadToDoList>(tarefa);
+            return Ok(dtoLista);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult RemoveTarefa(int id)
+        {
+            ToDoList tarefa = _context.ToDoLists.FirstOrDefault(x => x.Id == id);
+            if (tarefa == null)
+                return NotFound();
+
+            _context.Remove(tarefa);
+            _context.SaveChanges();
+            return NoContent();
+        }
     }
 }
