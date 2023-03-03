@@ -9,7 +9,7 @@ namespace Api_ToDoLis.Profiles
         public TipoListaProfile()
         {
             CreateMap<CreateTipoLista, TipoLista>()
-                .ForMember(o => o.Ativo, opt => opt.MapFrom(src => true));
+                .ForMember(o => o.Ativo, opt => opt.MapFrom(src => 1));
             CreateMap<TipoLista, ReadTipoLista>();
             CreateMap<UpdateTipoLista, TipoLista>();
         }
