@@ -1,8 +1,8 @@
 ﻿using Api_ToDoLis.Data;
-using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using Api_ToDoLis.Data.Dto.ToDoList;
 using Api_ToDoLis.Models;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Api_ToDoLis.Controllers
 {
@@ -29,9 +29,16 @@ namespace Api_ToDoLis.Controllers
         }
 
         [HttpGet]
-        public IActionResult RetornaTarefas()
+        public IActionResult RetornaTarefas([FromBody] int? Concluido = null)
         {
-            List<ToDoList> tarefas = _context.ToDoLists.ToList();
+            List<ToDoList> tarefas;
+            if(Concluido == 0)
+                tarefas = _context.ToDoLists.Where(x => x.Concluido == 0).ToList();
+            if(Concluido == 1)
+                tarefas = _context.ToDoLists.Where(x => x.Concluido == 1).ToList();
+            else
+                tarefas = _context.ToDoLists.ToList();
+            
             ReadToDoList dtoLista = _mapper.Map<ReadToDoList>(tarefas);
             return Ok(dtoLista);
         }
@@ -39,7 +46,7 @@ namespace Api_ToDoLis.Controllers
         [HttpGet("{id}")]
         public IActionResult RetornaTarefas(int id)
         {
-            ToDoList tarefa = _context.ToDoLists.FirstOrDefault(x => x.Id == id);
+            ToDoList tarefa = ConsultaId(id);
             if(tarefa == null)
                 return NotFound();
 
@@ -47,16 +54,34 @@ namespace Api_ToDoLis.Controllers
             return Ok(dtoLista);
         }
 
+        [HttpPut]
+        public IActionResult AtualizaListaTarefa(int id, [FromBody] UpdateToDoList dto)
+        {
+            ToDoList tarefa = ConsultaId(id);
+            if (tarefa == null)
+                return NotFound();
+
+            _mapper.Map(dto, tarefa);
+            _context.SaveChanges();
+            return Ok(tarefa);
+        }
+
         [HttpDelete("{id}")]
         public IActionResult RemoveTarefa(int id)
         {
-            ToDoList tarefa = _context.ToDoLists.FirstOrDefault(x => x.Id == id);
+            ToDoList tarefa = ConsultaId(id);
             if (tarefa == null)
                 return NotFound();
 
             _context.Remove(tarefa);
             _context.SaveChanges();
             return NoContent();
+        }
+
+        private ToDoList ConsultaId(int id)
+        {
+            ToDoList tarefa = _context.ToDoLists.FirstOrDefault(x => x.Id == id);
+            return tarefa;
         }
     }
 }

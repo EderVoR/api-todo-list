@@ -9,7 +9,8 @@ namespace Api_ToDoLis.Profiles
         public ToDoListProfile()
         {
             CreateMap<CreateToDoList, ToDoList>()
-                .ForMember(c => c.DataInclusao, opt => opt.MapFrom(src => DateTime.Now));
+                .ForMember(c => c.DataInclusao, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(c => c.Concluido, opt => opt.MapFrom(src =>  0));
             CreateMap<ToDoList, ReadToDoList>();
             CreateMap<UpdateToDoList, ToDoList>();
         }

@@ -10,7 +10,7 @@ namespace Api_ToDoLis.Models
         public string? Observacao { get; set; }
         public DateTime DataInclusao { get; set; }
         public DateTime? DataConclusao { get; set; }
-        public bool Concluido { get; set; }
+        public int Concluido { get; set; }
         public int? Tipo_Id { get; set; }
         public virtual TipoLista TipoLista { get; set; }
     }
