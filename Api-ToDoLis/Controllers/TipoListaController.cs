@@ -29,11 +29,25 @@ namespace Api_ToDoLis.Controllers
         }
 
         [HttpGet]
-        public IActionResult RetornaTipos()
+        public IActionResult RetornaTipos([FromQuery] int? Ativo = null)
         {
             List<TipoLista> lista;
-            lista = _context.TipoListas.ToList();
-            return Ok(lista);
+
+            if(Ativo == 1)
+            {
+                lista = _context.TipoListas.Where(c => c.Ativo == 1).ToList();
+            }
+            if (Ativo == 0)
+            {
+                lista = _context.TipoListas.Where(c => c.Ativo == 0).ToList();
+            }
+            else
+            {
+                lista = _context.TipoListas.ToList();
+            }
+
+            List<ReadTipoLista> tipoDto = _mapper.Map<List<ReadTipoLista>>(lista);
+            return Ok(tipoDto);
         }
 
         [HttpGet("{id}")]
@@ -45,6 +59,18 @@ namespace Api_ToDoLis.Controllers
 
             ReadTipoLista dtoLista = _mapper.Map<ReadTipoLista>(lista);
             return Ok(dtoLista);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult AtualizaTipoLista(int id, [FromBody] UpdateTipoLista dto)
+        {
+            TipoLista lista = _context.TipoListas.FirstOrDefault(x => x.Id == id);
+            if (lista == null)
+                return NotFound();
+
+            _mapper.Map(dto, lista);
+            _context.SaveChanges();
+            return Ok(dto);
         }
 
         [HttpDelete("{id}")]
